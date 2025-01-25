@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Mic, MicOff, Settings } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface VoiceControlsProps {
   isListening: boolean;
