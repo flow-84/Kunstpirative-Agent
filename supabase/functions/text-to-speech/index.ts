@@ -8,16 +8,19 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { text, voice = 'Aria' } = await req.json()
+    const { text, voice = '21m00Tcm4TlvDq8ikWAM' } = await req.json() // Default voice ID: Rachel
 
     if (!text) {
       throw new Error('Text is required')
     }
+
+    console.log('Generating speech for text:', text, 'using voice:', voice);
 
     const response = await fetch(`${ELEVEN_LABS_API_URL}/${voice}`, {
       method: 'POST',
@@ -37,7 +40,9 @@ serve(async (req) => {
     })
 
     if (!response.ok) {
-      throw new Error('Failed to generate speech')
+      const errorData = await response.text();
+      console.error('ElevenLabs API error:', errorData);
+      throw new Error(`Failed to generate speech: ${errorData}`);
     }
 
     const arrayBuffer = await response.arrayBuffer()
@@ -50,6 +55,7 @@ serve(async (req) => {
       },
     )
   } catch (error) {
+    console.error('Error in text-to-speech function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
