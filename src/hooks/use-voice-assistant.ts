@@ -12,7 +12,7 @@ export const useVoiceAssistant = () => {
       const { data, error } = await supabase.functions.invoke('text-to-speech', {
         body: { 
           text,
-          voice: 'Aria' // Using a default voice, can be made configurable
+          voice: '9BWtsMINqrJLrRacOk9x' // Correct voice ID for Aria
         }
       });
 
