@@ -1,15 +1,20 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { sendChatMessage } from '@/services/api';
 
+export interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 export function useVoiceAssistant() {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isActive, setIsActive] = useState(false);
   const [history, setHistory] = useState<Message[]>([]);
-  const recognition = useRef<SpeechRecognition | null>(null);
   const { toast } = useToast();
 
-  const generateResponse = async (input: string) => {
+  const generateResponse = useCallback(async (input: string) => {
+    if (isProcessing) return; // Verhindere parallele Verarbeitung
+    
     try {
       setIsProcessing(true);
       console.log('Verarbeite Spracheingabe:', input);
@@ -19,7 +24,12 @@ export function useVoiceAssistant() {
       
       if (data.audioContent) {
         const audio = new Audio(`data:audio/mp3;base64,${data.audioContent}`);
-        await audio.play();
+        // Warte auf das Ende der Audio-Wiedergabe
+        await new Promise((resolve) => {
+          audio.onended = resolve;
+          audio.onerror = resolve;
+          audio.play().catch(console.error);
+        });
         setHistory(data.history || []);
       }
     } catch (error) {
@@ -31,82 +41,13 @@ export function useVoiceAssistant() {
       });
     } finally {
       setIsProcessing(false);
-      // Nach der Verarbeitung neu starten
-      if (isActive && recognition.current) {
-        try {
-          recognition.current.start();
-        } catch (error) {
-          console.error('Fehler beim Neustarten der Spracherkennung:', error);
-        }
-      }
     }
-  };
-
-  const setupRecognition = useCallback(() => {
-    if (!('webkitSpeechRecognition' in window)) {
-      toast({
-        title: "Fehler",
-        description: "Spracherkennung wird in diesem Browser nicht unterstützt",
-        variant: "destructive",
-      });
-      return null;
-    }
-
-    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-    const recognitionInstance = new SpeechRecognition();
-    
-    recognitionInstance.continuous = false;
-    recognitionInstance.interimResults = false;
-    recognitionInstance.lang = 'de-DE';
-
-    recognitionInstance.onresult = async (event) => {
-      const transcript = event.results[0][0].transcript;
-      console.log('Spracheingabe erkannt:', transcript);
-      await generateResponse(transcript);
-    };
-
-    recognitionInstance.onerror = (event) => {
-      console.error('Spracherkennungsfehler:', event.error);
-      if (event.error !== 'no-speech') {
-        toast({
-          title: "Fehler bei der Spracherkennung",
-          description: event.error,
-          variant: "destructive",
-        });
-      }
-    };
-
-    return recognitionInstance;
-  }, [toast]);
-
-  const startListening = useCallback(() => {
-    if (!recognition.current) {
-      recognition.current = setupRecognition();
-    }
-
-    if (recognition.current) {
-      setIsActive(true);
-      try {
-        recognition.current.start();
-      } catch (error) {
-        console.error('Fehler beim Starten der Spracherkennung:', error);
-      }
-    }
-  }, [setupRecognition]);
-
-  const stopListening = useCallback(() => {
-    setIsActive(false);
-    if (recognition.current) {
-      recognition.current.stop();
-      recognition.current = null;
-    }
-  }, []);
+  }, [history, toast, isProcessing]);
 
   return {
     isProcessing,
-    isActive,
-    startListening,
-    stopListening,
+    generateResponse,
+    history
   };
 }
 

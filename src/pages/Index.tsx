@@ -2,20 +2,17 @@ import React, { useState } from 'react';
 import { EnergyOrb } from '@/components/EnergyOrb';
 import { VoiceControls } from '@/components/VoiceControls';
 import { useToast } from '@/hooks/use-toast';
-import { useVoiceAssistant } from '@/hooks/use-voice-assistant';
 import { Conversation } from '@/components/Conversation';
-import { Logo } from '@/components/Logo';
 
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
   const { toast } = useToast();
-  const { isProcessing } = useVoiceAssistant();
 
-  const handleToggleListen = async () => {
+  const handleToggleListen = () => {
     setIsListening(!isListening);
     toast({
-      title: isListening ? "Voice Assistant deaktiviert" : "Voice Assistant aktiviert",
-      description: isListening ? undefined : "Ich höre zu...",
+      title: !isListening ? "Voice Assistant aktiviert" : "Voice Assistant deaktiviert",
+      description: !isListening ? "Ich höre zu..." : undefined,
       duration: 2000,
     });
   };
@@ -35,11 +32,8 @@ const Index = () => {
       
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center gap-8">
-        {/* Logo über der Energiekugel */}
-        <Logo className="mb-4 px-4 sm:px-0 w-[150px] sm:w-[200px] md:w-[250px] animate-fade-in" />
-        
         <EnergyOrb 
-          isActive={isListening || isProcessing} 
+          isActive={isListening} 
           onClick={handleToggleListen}
         />
         
