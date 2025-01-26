@@ -3,30 +3,20 @@ import { EnergyOrb } from '@/components/EnergyOrb';
 import { VoiceControls } from '@/components/VoiceControls';
 import { useToast } from '@/hooks/use-toast';
 import { useVoiceAssistant } from '@/hooks/use-voice-assistant';
+import { Conversation } from '@/components/Conversation';
 
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
   const { toast } = useToast();
-  const { isProcessing, generateResponse } = useVoiceAssistant();
+  const { isProcessing } = useVoiceAssistant();
 
   const handleToggleListen = async () => {
     setIsListening(!isListening);
-    
-    if (!isListening) {
-      toast({
-        title: "Voice Assistant aktiviert",
-        description: "Ich höre zu...",
-        duration: 2000,
-      });
-      
-      // Example response - this should be replaced with actual voice input processing
-      await generateResponse("Hallo! Wie kann ich Ihnen helfen?");
-    } else {
-      toast({
-        title: "Voice Assistant deaktiviert",
-        duration: 2000,
-      });
-    }
+    toast({
+      title: isListening ? "Voice Assistant deaktiviert" : "Voice Assistant aktiviert",
+      description: isListening ? undefined : "Ich höre zu...",
+      duration: 2000,
+    });
   };
 
   const handleOpenSettings = () => {
@@ -44,13 +34,17 @@ const Index = () => {
       
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center gap-8">
-        <EnergyOrb isActive={isListening || isProcessing} />
+        <EnergyOrb 
+          isActive={isListening || isProcessing} 
+          onClick={handleToggleListen}
+        />
         
         <div className="text-center">
           <h1 className="text-4xl font-bold text-primary mb-2">AI Voice Assistant</h1>
-          <p className="text-primary/60">
-            {isProcessing ? "Verarbeite..." : "Tippen Sie auf das Mikrofon zum Starten"}
-          </p>
+          <Conversation 
+            isListening={isListening}
+            onStatusChange={setIsListening}
+          />
         </div>
       </div>
 

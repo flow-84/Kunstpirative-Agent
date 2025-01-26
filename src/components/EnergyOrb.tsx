@@ -2,26 +2,43 @@ import React, { useEffect, useRef } from 'react';
 import { cn } from "@/lib/utils";
 
 interface EnergyOrbProps {
-  isActive?: boolean;
-  className?: string;
+  isActive: boolean;
+  onClick?: () => void;
 }
 
-export const EnergyOrb: React.FC<EnergyOrbProps> = ({ isActive = false, className }) => {
+export function EnergyOrb({ isActive, onClick }: EnergyOrbProps) {
   return (
-    <div className={cn("relative w-64 h-64", className)}>
-      {/* Main orb */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-primary/80 to-primary/20 animate-float" />
-      
-      {/* Glow effect */}
-      <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl animate-pulse-slow" />
-      
-      {/* Inner glow */}
-      <div className="absolute inset-8 rounded-full bg-primary/30 blur-md animate-glow-pulse" />
-      
-      {/* Active state glow */}
-      {isActive && (
-        <div className="absolute inset-0 rounded-full bg-secondary/30 blur-2xl animate-pulse" />
-      )}
+    <div 
+      className={`
+        w-48 h-48 rounded-full 
+        bg-gradient-to-r from-primary to-primary-foreground
+        shadow-lg 
+        transition-all duration-500 ease-in-out
+        ${isActive ? 'scale-110 shadow-primary/50' : 'scale-100 opacity-80'}
+        cursor-pointer
+        hover:scale-105
+        active:scale-95
+      `}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      aria-label={isActive ? "Voice Assistant deaktivieren" : "Voice Assistant aktivieren"}
+    >
+      <div className={`
+        w-full h-full rounded-full 
+        bg-gradient-to-b from-background/80 to-background/20
+        flex items-center justify-center
+        transition-opacity duration-500
+        ${isActive ? 'animate-pulse' : ''}
+      `}>
+        <div className={`
+          w-32 h-32 rounded-full 
+          bg-gradient-to-tr from-primary/20 to-primary/5
+          flex items-center justify-center
+          transition-transform duration-500
+          ${isActive ? 'scale-110' : 'scale-100'}
+        `} />
+      </div>
     </div>
   );
-};
+}
