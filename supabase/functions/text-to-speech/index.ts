@@ -7,7 +7,7 @@ declare const Deno: {
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 
 const ELEVEN_LABS_API_URL = 'https://api.elevenlabs.io/v1';
-const AGENT_ID = 'hzw0SFAAACNboeG4ZaBt';
+const AGENT_ID = 'Jy7wB2DDRmoKRPvEfiPE';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
