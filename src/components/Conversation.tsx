@@ -74,7 +74,7 @@ export function Conversation({ isListening, onStatusChange }: ConversationProps)
   return (
     <div className="flex flex-col items-center space-y-4">
       <div className="text-center">
-        <p className="text-primary/60 text-lg font-medium">
+        <p className="text-gray-600 text-lg font-medium">
           {isListening ? "Ich höre zu..." : "Tippen Sie auf das Mikrofon zum Starten"}
         </p>
         {conversation.error && (
@@ -85,7 +85,7 @@ export function Conversation({ isListening, onStatusChange }: ConversationProps)
       </div>
       <div className="flex items-center justify-center space-x-2">
         <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
-        <span className="text-sm text-primary/60">
+        <span className="text-sm text-gray-600">
           {isListening ? "Aktiv" : "Inaktiv"}
         </span>
       </div>

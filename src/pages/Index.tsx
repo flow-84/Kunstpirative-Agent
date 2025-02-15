@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { EnergyOrb } from '@/components/EnergyOrb';
-import { VoiceControls } from '@/components/VoiceControls';
 import { useToast } from '@/hooks/use-toast';
 import { Conversation } from '@/components/Conversation';
+import { Logo } from '@/components/Logo';
+import { FuturisticPanel } from '@/components/FuturisticPanel';
 
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
@@ -17,41 +18,45 @@ const Index = () => {
     });
   };
 
-  const handleOpenSettings = () => {
-    toast({
-      title: "Einstellungen",
-      description: "Einstellungen werden in der nächsten Version implementiert",
-      duration: 2000,
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-accent flex flex-col items-center justify-center overflow-hidden">
-      {/* Background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-b from-accent to-accent/50" />
-      
-      {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center gap-8">
-        <EnergyOrb 
-          isActive={isListening} 
-          onClick={handleToggleListen}
+    <div className="min-h-screen bg-accent flex flex-col items-center justify-between overflow-hidden">
+      {/* Background image and overlay */}
+      <div className="fixed inset-0">
+        {/* Background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80"
+          style={{ 
+            backgroundImage: 'url("/minimalist-interior-of-modern-living-room-3d-rende-2-KNAP5T2.jpg")',
+          }}
         />
-        
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-primary mb-2">AI Voice Assistant</h1>
-          <Conversation 
-            isListening={isListening}
-            onStatusChange={setIsListening}
-          />
-        </div>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/40 via-accent/30 to-accent/50" />
       </div>
-
-      {/* Controls */}
-      <VoiceControls
-        isListening={isListening}
-        onToggleListen={handleToggleListen}
-        onOpenSettings={handleOpenSettings}
-      />
+      
+      {/* Logo section - 2/3 height */}
+      <div className="relative z-10 w-full flex-[2] flex items-center justify-center pt-8">
+        <Logo className="transform hover:scale-105 transition-transform duration-300" />
+      </div>
+      
+      {/* Main content section - 1/3 height */}
+      <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-start gap-8 my-8">
+        <FuturisticPanel className="w-[90%] max-w-2xl mx-auto">
+          <div className="flex flex-col items-center gap-8">
+            <EnergyOrb 
+              isActive={isListening} 
+              onClick={handleToggleListen}
+            />
+            
+            <div className="text-center">
+              <h1 className="text-4xl font-light text-gray-800 mb-2">Voice Assistant</h1>
+              <Conversation 
+                isListening={isListening}
+                onStatusChange={setIsListening}
+              />
+            </div>
+          </div>
+        </FuturisticPanel>
+      </div>
     </div>
   );
 };

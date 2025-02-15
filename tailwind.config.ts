@@ -17,19 +17,23 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "#FFFFFF",
+        foreground: "#000000",
         primary: {
-          DEFAULT: "#00F5D4",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#DEB887",
+          foreground: "#000000",
         },
         secondary: {
-          DEFAULT: "#9B6DFF",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#8B4513",
+          foreground: "#FFFFFF",
         },
         accent: {
-          DEFAULT: "#0A0F1C",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#F5F5F5",
+          foreground: "#000000",
+        },
+        wood: {
+          DEFAULT: "#DEB887",
+          dark: "#8B4513",
         },
       },
       animation: {
