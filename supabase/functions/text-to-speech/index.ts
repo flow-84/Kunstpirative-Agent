@@ -1,13 +1,14 @@
-declare const Deno: {
-  env: {
-    get(key: string): string | undefined;
-  };
-};
-
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { createServer } from 'http';
 
 const ELEVEN_LABS_API_URL = 'https://api.elevenlabs.io/v1';
-const AGENT_ID = 'Jy7wB2DDRmoKRPvEfiPE';
+const AGENT_ID = Deno.env.get('ELEVEN_LABS_AGENT_ID') || '';
+
+if (!AGENT_ID) {
+  throw new Error('ELEVEN_LABS_AGENT_ID environment variable is not set');
+}
+
+console.log('Using AGENT_ID:', AGENT_ID);
+console.log('Fetching from URL:', `${ELEVEN_LABS_API_URL}/projects/${AGENT_ID}/chat`);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,91 +25,106 @@ interface RequestBody {
   history: Message[];
 }
 
-serve(async (req: Request) => {
+interface AgentData {
+  assistant_response: string;
+  // Füge hier weitere Felder hinzu, die du erwartest
+}
+
+createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    res.writeHead(200, corsHeaders);
+    res.end('ok');
+    return;
   }
 
   try {
-    const { text, history = [] } = await req.json() as RequestBody;
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    req.on('end', async () => {
+      const { text, history = [] } = JSON.parse(body) as RequestBody;
 
-    if (!text?.trim()) {
-      throw new Error('Text is required');
-    }
+      if (!text?.trim()) {
+        throw new Error('Text is required');
+      }
 
-    const agentResponse = await fetch(`${ELEVEN_LABS_API_URL}/assistant/${AGENT_ID}/chat`, {
-      method: 'POST',
-      headers: {
-        'xi-api-key': Deno.env.get('ELEVEN_LABS_API_KEY') || '',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+      console.log('Sending data to agent:', {
         message: text,
         history: history.map(msg => ({
           role: msg.role,
           text: msg.content
         }))
-      }),
-    });
+      });
 
-    if (!agentResponse.ok) {
-      const errorData = await agentResponse.text();
-      throw new Error(`Agent error: ${errorData}`);
-    }
-
-    const agentData = await agentResponse.json();
-
-    if (!agentData.assistant_response) {
-      throw new Error('Keine Antwort vom Agent erhalten');
-    }
-
-    const voiceResponse = await fetch(`${ELEVEN_LABS_API_URL}/text-to-speech/${AGENT_ID}`, {
-      method: 'POST',
-      headers: {
-        'xi-api-key': Deno.env.get('ELEVEN_LABS_API_KEY') || '',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text: agentData.assistant_response,
-        model_id: 'eleven_multilingual_v2',
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.5,
+      const agentResponse = await fetch(`${ELEVEN_LABS_API_URL}/projects/${AGENT_ID}/chat`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': Deno.env.get('ELEVEN_LABS_API_KEY_2') || '',
+          'Content-Type': 'application/json',
         },
-      }),
-    });
+        body: JSON.stringify({
+          message: text,
+          history: history.map(msg => ({
+            role: msg.role,
+            text: msg.content
+          }))
+        }),
+      });
 
-    if (!voiceResponse.ok) {
-      const errorData = await voiceResponse.text();
-      throw new Error(`Voice error: ${errorData}`);
-    }
+      if (!agentResponse.ok) {
+        const errorData = await agentResponse.text();
+        console.error('Agent response error:', errorData);
+        throw new Error(`Agent error: ${errorData}`);
+      }
 
-    const arrayBuffer = await voiceResponse.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    const base64Audio = btoa(Array.from(uint8Array).map(byte => String.fromCharCode(byte)).join(''));
+      const agentData = await agentResponse.json() as AgentData;
 
-    const updatedHistory = [
-      ...history,
-      { role: 'user', content: text },
-      { role: 'assistant', content: agentData.assistant_response }
-    ];
+      if (!agentData.assistant_response) {
+        throw new Error('Keine Antwort vom Agent erhalten');
+      }
 
-    return new Response(
-      JSON.stringify({
+      const voiceResponse = await fetch(`${ELEVEN_LABS_API_URL}/text-to-speech/${AGENT_ID}`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': Deno.env.get('ELEVEN_LABS_API_KEY_2') || '',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: agentData.assistant_response,
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.5,
+          },
+        }),
+      });
+
+      if (!voiceResponse.ok) {
+        const errorData = await voiceResponse.text();
+        throw new Error(`Voice error: ${errorData}`);
+      }
+
+      const arrayBuffer = await voiceResponse.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+      const base64Audio = btoa(Array.from(uint8Array).map(byte => String.fromCharCode(byte)).join(''));
+
+      const updatedHistory = [
+        ...history,
+        { role: 'user', content: text },
+        { role: 'assistant', content: agentData.assistant_response }
+      ];
+
+      res.writeHead(200, { ...corsHeaders, 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
         message: agentData.assistant_response,
         audioContent: base64Audio,
         history: updatedHistory
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-    );
+      }));
+    });
   } catch (error: any) {
     console.error('Error:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      },
-    );
+    res.writeHead(400, { ...corsHeaders, 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: error.message }));
   }
-});
+}).listen(8000);

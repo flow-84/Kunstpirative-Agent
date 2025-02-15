@@ -11,22 +11,22 @@ export function Conversation({ isListening, onStatusChange }: ConversationProps)
   const conversationStarted = useRef(false);
   
   const conversation = useConversation({
-    apiKey: import.meta.env.VITE_ELEVEN_LABS_API_KEY,
+    apiKey: import.meta.env.VITE_ELEVENLABS_API_KEY,
     onConnect: () => {
-      console.log('Connected');
+      console.log('Connected to ElevenLabs');
       conversationStarted.current = true;
       onStatusChange(true);
     },
     onDisconnect: () => {
-      console.log('Disconnected');
+      console.log('Disconnected from ElevenLabs');
       conversationStarted.current = false;
       onStatusChange(false);
     },
     onMessage: (message) => {
-      console.log('Message:', message);
+      console.log('Received message from ElevenLabs:', message);
     },
     onError: (error) => {
-      console.error('Error:', error);
+      console.error('ElevenLabs Error:', error);
       conversationStarted.current = false;
       onStatusChange(false);
     },
@@ -36,10 +36,17 @@ export function Conversation({ isListening, onStatusChange }: ConversationProps)
     if (conversationStarted.current) return;
     
     try {
+      console.log('Starting conversation...');
+      console.log('API Key:', import.meta.env.VITE_ELEVENLABS_API_KEY ? 'Present' : 'Missing');
+      console.log('Agent ID:', import.meta.env.VITE_ELEVENLABS_AGENT_ID ? 'Present' : 'Missing');
+      
       await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('Microphone access granted');
+      
       await conversation.startSession({
-        agentId: 'hzw0SFAAACNboeG4ZaBt',
+        agentId: import.meta.env.VITE_ELEVENLABS_AGENT_ID,
       });
+      console.log('Session started successfully');
     } catch (error) {
       console.error('Failed to start conversation:', error);
       onStatusChange(false);
@@ -70,6 +77,11 @@ export function Conversation({ isListening, onStatusChange }: ConversationProps)
         <p className="text-primary/60 text-lg font-medium">
           {isListening ? "Ich höre zu..." : "Tippen Sie auf das Mikrofon zum Starten"}
         </p>
+        {conversation.error && (
+          <p className="text-red-500 text-sm mt-2">
+            Fehler: {conversation.error.message || 'Ein unbekannter Fehler ist aufgetreten'}
+          </p>
+        )}
       </div>
       <div className="flex items-center justify-center space-x-2">
         <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
