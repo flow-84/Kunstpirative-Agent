@@ -1,69 +1,52 @@
-# Welcome to your Lovable project
+# Vincent Agent Demo
 
-## Project info
+Eine moderne Sprachassistent-Demonstration mit KI-Integration und eleganter Benutzeroberfläche.
 
-**URL**: https://lovable.dev/projects/3b822633-6c85-4a8b-a6bc-bdedbd32b467
+## Überblick
 
-## How can I edit this code?
+Diese Demo zeigt die Möglichkeiten eines KI-gestützten Sprachassistenten in einer professionellen Umgebung. Mit einer minimalistischen und eleganten Benutzeroberfläche demonstriert die Anwendung fortschrittliche Sprachtechnologie in einem ansprechenden Design.
 
-There are several ways of editing your application.
+## Technologien
 
-**Use Lovable**
+- React + Vite
+- TypeScript
+- Tailwind CSS
+- ElevenLabs Voice AI
+- Moderne UI/UX-Prinzipien
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3b822633-6c85-4a8b-a6bc-bdedbd32b467) and start prompting.
+## Features
 
-Changes made via Lovable will be committed automatically to this repo.
+- Spracherkennung und -synthese
+- Elegantes, minimalistisches Design
+- Responsive Benutzeroberfläche
+- Echtzeit-Feedback
+- Glasmorphismus-Effekte
 
-**Use your preferred IDE**
+## Entwicklung
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Installation
+pnpm install
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Entwicklungsserver starten
+pnpm dev
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Build für Produktion
+pnpm build
 ```
 
-**Edit a file directly in GitHub**
+## Umgebungsvariablen
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Erstellen Sie eine `.env`-Datei mit folgenden Variablen:
 
-**Use GitHub Codespaces**
+```
+VITE_ELEVENLABS_API_KEY=ihr_api_key
+VITE_ELEVENLABS_AGENT_ID=ihr_agent_id
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deployment
 
-## What technologies are used for this project?
+Die Anwendung ist optimiert für Deployment auf Netlify.
 
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/3b822633-6c85-4a8b-a6bc-bdedbd32b467) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+---
+&copy; 2025 Vincent Design Team. Alle Rechte vorbehalten.
