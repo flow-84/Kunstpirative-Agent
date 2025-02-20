@@ -26,7 +26,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80"
           style={{ 
-            backgroundImage: 'url("/minimalist-interior-of-modern-living-room-3d-rende-2-KNAP5T2.jpg")',
+            backgroundColor: '#f7f7f7',
           }}
         />
         {/* Gradient overlay */}

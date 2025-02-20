@@ -11,7 +11,7 @@ export function EnergyOrb({ isActive, onClick }: EnergyOrbProps) {
     <div 
       className={`
         w-48 h-48 rounded-full 
-        bg-gradient-to-r from-primary to-primary-foreground
+        bg-[url('../public/e56f3a_4d6a021e55c14ae39ba5b25fcfce9f11mv2.png')] bg-cover
         shadow-lg 
         transition-all duration-500 ease-in-out
         ${isActive ? 'scale-110 shadow-primary/50' : 'scale-100 opacity-80'}
