@@ -6,9 +6,7 @@
   background-color: #f7f7f7; /* Set a solid background color instead */
 }
 
-.logo {
-  content: url('../public/new-logo.png'); /* Update to the new logo */
-}
+
 
 .button {
   background-image: url('../public/new-button-image.png'); /* Update to the new button image */
