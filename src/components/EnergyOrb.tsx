@@ -11,10 +11,9 @@ export function EnergyOrb({ isActive, onClick }: EnergyOrbProps) {
     <div 
       className={`
         w-48 h-48 rounded-full 
-        bg-[url('../public/e56f3a_4d6a021e55c14ae39ba5b25fcfce9f11mv2.png')] bg-cover
         shadow-lg 
         transition-all duration-500 ease-in-out
-        ${isActive ? 'scale-110 shadow-primary/50' : 'scale-100 opacity-80'}
+        ${isActive ? 'scale-110 shadow-[0_0_0_2px_rgb(0,229,255)/50]' : 'scale-100 opacity-80'}
         cursor-pointer
         hover:scale-105
         active:scale-95
@@ -26,14 +25,14 @@ export function EnergyOrb({ isActive, onClick }: EnergyOrbProps) {
     >
       <div className={`
         w-full h-full rounded-full 
-        bg-gradient-to-b from-background/80 to-background/20
+        bg-gradient-to-b from-[#00E5FF] to-[#00E5FF]
         flex items-center justify-center
         transition-opacity duration-500
         ${isActive ? 'animate-pulse' : ''}
       `}>
         <div className={`
           w-32 h-32 rounded-full 
-          bg-gradient-to-tr from-primary/20 to-primary/5
+          bg-gradient-to-tr from-[#00E5FF]/20 to-[#00E5FF]/5
           flex items-center justify-center
           transition-transform duration-500
           ${isActive ? 'scale-110' : 'scale-100'}
