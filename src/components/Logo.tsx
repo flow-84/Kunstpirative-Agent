@@ -11,7 +11,7 @@ export function Logo({ className }: LogoProps) {
       {/* Logo with enhanced visibility */}
       <div className="relative">
         <img
-          src="/public/image.jpg"
+          src="/image.jpg"
           alt="Logo"
           className="w-full h-auto max-w-[240px] drop-shadow-[0_4px_6px_rgba(0,0,0,0.1)] filter brightness-[0.97]"
           style={{
